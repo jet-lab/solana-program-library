@@ -87,6 +87,7 @@ pub fn process_deposit_governing_tokens(
             governing_token_deposit_amount: amount,
             governing_token_mint,
             governance_delegate: None,
+            revocation_authority: None,
             unrelinquished_votes_count: 0,
             total_votes_count: 0,
             outstanding_proposal_count: 0,

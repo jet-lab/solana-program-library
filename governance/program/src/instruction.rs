@@ -90,6 +90,7 @@ pub enum GovernanceInstruction {
     ///  3. `[signer]` Governing Token Owner account
     ///  4. `[writable]` Token Owner  Record account. PDA seeds: ['governance',realm, governing_token_mint, governing_token_owner]
     ///  5. `[]` SPL Token
+    ///  4. `[signer]` Optional revocation authority
     WithdrawGoverningTokens {},
 
     /// Sets Governance Delegate for the given Realm and Governing Token Mint (Community or Council)

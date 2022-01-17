@@ -8,11 +8,10 @@ use solana_program::{
 };
 
 use crate::{
-    error::GovernanceError,
     state::{
         realm::{get_realm_address_seeds, get_realm_data},
         token_owner_record::{
-            get_token_owner_record_address_seeds, get_token_owner_record_data_for_seeds,
+            get_token_owner_record_address_seeds, get_token_owner_record_data_for_seeds, Role,
         },
     },
     tools::spl_token::{get_spl_token_mint, transfer_spl_tokens_signed},
@@ -31,10 +30,7 @@ pub fn process_withdraw_governing_tokens(
     let governing_token_owner_info = next_account_info(account_info_iter)?; // 3
     let token_owner_record_info = next_account_info(account_info_iter)?; // 4
     let spl_token_info = next_account_info(account_info_iter)?; // 5
-
-    if !governing_token_owner_info.is_signer {
-        return Err(GovernanceError::GoverningTokenOwnerMustSign.into());
-    }
+    let governance_authority_info = next_account_info(account_info_iter)?; // 6  -- todo optional for backwards compatibility
 
     let realm_data = get_realm_data(program_id, realm_info)?;
     let governing_token_mint = get_spl_token_mint(governing_token_holding_info)?;
@@ -57,6 +53,12 @@ pub fn process_withdraw_governing_tokens(
         token_owner_record_info,
         &token_owner_record_address_seeds,
     )?;
+
+    let permitted_roles = match token_owner_record_data.revocation_authority {
+        Some(_) => Role::Revoker,
+        None => Role::Depositor,
+    };
+    token_owner_record_data.assert_permitted_role_is_signer(governance_authority_info, vec![permitted_roles])?;
 
     token_owner_record_data.assert_can_withdraw_governing_tokens()?;
 

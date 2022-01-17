@@ -47,6 +47,7 @@ pub fn process_create_token_owner_record(
         governing_token_deposit_amount: 0,
         governing_token_mint: *governing_token_mint_info.key,
         governance_delegate: None,
+        revocation_authority: None,
         unrelinquished_votes_count: 0,
         total_votes_count: 0,
         outstanding_proposal_count: 0,

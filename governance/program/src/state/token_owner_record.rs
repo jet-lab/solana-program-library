@@ -63,6 +63,9 @@ pub struct TokenOwnerRecord {
     /// A single account that is allowed to operate governance with the deposited governing tokens
     /// It can be delegated to by the governing_token_owner or current governance_delegate
     pub governance_delegate: Option<Pubkey>,
+
+    /// Account who may rescind votes and withdraw tokens
+    pub revocation_authority: Option<Pubkey>,
 }
 
 impl AccountMaxSize for TokenOwnerRecord {
@@ -75,6 +78,17 @@ impl IsInitialized for TokenOwnerRecord {
     fn is_initialized(&self) -> bool {
         self.account_type == GovernanceAccountType::TokenOwnerRecord
     }
+}
+
+/// todo
+#[derive(PartialEq)]
+pub enum Role {
+    /// todo
+    Depositor,
+    /// todo
+    Delegate,
+    /// todo
+    Revoker,
 }
 
 impl TokenOwnerRecord {
@@ -95,6 +109,38 @@ impl TokenOwnerRecord {
             };
         }
 
+        Err(GovernanceError::GoverningTokenOwnerOrDelegateMustSign.into())
+    }
+
+    /// Checks whether the provided Governance Authority signed transaction
+    pub fn assert_permitted_role_is_signer(
+        &self,
+        governance_authority_info: &AccountInfo,
+        permitted_roles: Vec<Role>,
+    ) -> Result<(), ProgramError> {
+        if governance_authority_info.is_signer {
+            if permitted_roles.contains(&Role::Depositor)
+                && &self.governing_token_owner == governance_authority_info.key
+            {
+                return Ok(());
+            }
+
+            if let Some(governance_delegate) = self.governance_delegate {
+                if permitted_roles.contains(&Role::Delegate)
+                    && &governance_delegate == governance_authority_info.key
+                {
+                    return Ok(());
+                }
+            };
+
+            if let Some(revocation_authority) = self.revocation_authority {
+                if permitted_roles.contains(&Role::Revoker)
+                    && &revocation_authority == governance_authority_info.key
+                {
+                    return Ok(());
+                }
+            };
+        }
         Err(GovernanceError::GoverningTokenOwnerOrDelegateMustSign.into())
     }
 
@@ -320,6 +366,7 @@ mod test {
             governing_token_owner: Pubkey::new_unique(),
             governing_token_deposit_amount: 10,
             governance_delegate: Some(Pubkey::new_unique()),
+            revocation_authority: None,
             unrelinquished_votes_count: 1,
             total_votes_count: 1,
             outstanding_proposal_count: 1,

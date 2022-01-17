@@ -13,7 +13,7 @@ use crate::state::{
     enums::ProposalState,
     governance::get_governance_data,
     proposal::get_proposal_data_for_governance_and_governing_mint,
-    token_owner_record::get_token_owner_record_data_for_realm_and_governing_mint,
+    token_owner_record::{get_token_owner_record_data_for_realm_and_governing_mint, Role},
     vote_record::{get_vote_record_data_for_proposal_and_token_owner, Vote},
 };
 
@@ -67,8 +67,10 @@ pub fn process_relinquish_vote(program_id: &Pubkey, accounts: &[AccountInfo]) ->
 
         // Note: It's only required to sign by governing_authority if relinquishing the vote results in vote change
         // If the Proposal is already decided then anybody can prune active votes for token owner
-        token_owner_record_data
-            .assert_token_owner_or_delegate_is_signer(governance_authority_info)?;
+        token_owner_record_data.assert_permitted_role_is_signer(
+            governance_authority_info,
+            vec![Role::Depositor, Role::Revoker],
+        )?;
 
         match vote_record_data.vote {
             Vote::Approve(choices) => {
