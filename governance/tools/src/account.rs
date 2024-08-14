@@ -5,7 +5,7 @@ use {
     borsh::{BorshDeserialize, BorshSerialize},
     solana_program::{
         account_info::AccountInfo,
-        borsh1::try_from_slice_unchecked,
+        borsh0_10::{try_from_slice_unchecked},
         msg,
         program::{invoke, invoke_signed},
         program_error::ProgramError,

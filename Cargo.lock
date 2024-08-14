@@ -7071,7 +7071,7 @@ dependencies = [
  "assert_matches",
  "base64 0.22.1",
  "bincode",
- "borsh 1.5.1",
+ "borsh 0.10.3",
  "num-derive 0.4.2",
  "num-traits",
  "proptest",
@@ -7092,7 +7092,7 @@ dependencies = [
 name = "spl-governance-addin-api"
 version = "0.1.4"
 dependencies = [
- "borsh 1.5.1",
+ "borsh 0.10.3",
  "solana-program",
  "spl-governance-tools",
 ]
@@ -7104,7 +7104,7 @@ dependencies = [
  "arrayref",
  "assert_matches",
  "bincode",
- "borsh 1.5.1",
+ "borsh 0.10.3",
  "num-derive 0.4.2",
  "num-traits",
  "proptest",
@@ -7127,7 +7127,7 @@ dependencies = [
  "arrayref",
  "assert_matches",
  "bincode",
- "borsh 1.5.1",
+ "borsh 0.10.3",
  "num-derive 0.4.2",
  "num-traits",
  "proptest",
@@ -7151,7 +7151,7 @@ version = "0.1.4"
 dependencies = [
  "arrayref",
  "bincode",
- "borsh 1.5.1",
+ "borsh 0.10.3",
  "lazy_static",
  "num-derive 0.4.2",
  "num-traits",
@@ -7170,7 +7170,7 @@ version = "0.1.4"
 dependencies = [
  "arrayref",
  "bincode",
- "borsh 1.5.1",
+ "borsh 0.10.3",
  "num-derive 0.4.2",
  "num-traits",
  "serde",
